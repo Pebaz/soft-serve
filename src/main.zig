@@ -23,20 +23,25 @@ const Float = struct
     }
 };
 
-pub fn print_digits(num: u32) void
+// pub fn print_digits(num: u32) void
+// {
+//     // var digits = [10]u32;
+//     var n = num;
+//     var index = 0;
+//     while (n > 0)
+//     {
+//         var digit = n % 10;
+//         digits[digits.length - index] = digit;
+//         std.debug.print("{}", .{digit});
+//         n = n / 10;
+//         index += 1;
+//     }
+// }
+
+const IEEE754 = struct
 {
-    var digits = [10]u32;
-    var n = num;
-    var index = 0;
-    while (n > 0)
-    {
-        var digit = n % 10;
-        digits[digits.length - index] = digit;
-        std.debug.print("{}", .{digit});
-        n = n / 10;
-        index += 1;
-    }
-}
+    bits: [32]u8,
+};
 
 pub fn main() !void
 {
@@ -44,5 +49,5 @@ pub fn main() !void
     var f = Float.init(3.14);
     std.debug.print("VALUE: {}\n", .{f});
 
-    print_digits(123);
+    // print_digits(123);
 }
