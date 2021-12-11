@@ -5,7 +5,7 @@ A couple goals:
 2. Take binary float in, convert to string (for a program)
 """
 
-
+# 0. https://github.com/grzegorz-kraszewski/stringtofloat/blob/master/str2dbl.c <AND> http://krashan.ppa.pl/articles/stringtofloat/
 # 1. https://github.com/gcc-mirror/gcc/blob/master/libgcc/soft-fp/single.h
 # 2. https://class.ece.iastate.edu/arun/CprE281_F05/ieee754/ie5.html
 # 3. https://gcc.gnu.org/onlinedocs/gccint/Soft-float-library-routines.html
@@ -156,69 +156,71 @@ if __name__ == "__main__":
 # of Mantissa to float value.
 def convertToInt(mantissa_str):
 
-	# variable to make a count
-	# of negative power of 2.
-	power_count = -1
+    # variable to make a count
+    # of negative power of 2.
+    power_count = -1
 
-	# variable to store
-	# float value of mantissa.
-	mantissa_int = 0
+    # variable to store
+    # float value of mantissa.
+    mantissa_int = 0
 
-	# Iterations through binary
-	# Number. Standard form of
-	# Mantissa is 1.M so we have
-	# 0.M therefore we are taking
-	# negative powers on 2 for
-	# conversion.
-	for i in mantissa_str:
+    # Iterations through binary
+    # Number. Standard form of
+    # Mantissa is 1.M so we have
+    # 0.M therefore we are taking
+    # negative powers on 2 for
+    # conversion.
+    for i in mantissa_str:
 
-		# Adding converted value of
-		# Binary bits in every
-		# iteration to float mantissa.
-		mantissa_int += (int(i) * pow(2, power_count))
+        # Adding converted value of
+        # Binary bits in every
+        # iteration to float mantissa.
+        mantissa_int += (int(i) * pow(2, power_count))
 
-		# count will decrease by 1
-		# as we move toward right.
-		power_count -= 1
+        # count will decrease by 1
+        # as we move toward right.
+        power_count -= 1
 
-	# returning mantissa in 1.M form.
-	return (mantissa_int + 1)
+    print(mantissa_int, type(mantissa_int))
+
+    # returning mantissa in 1.M form.
+    return (mantissa_int + 1)
 
 if __name__ == "__main__":
-	# Floating Point Representation
-	# to be converted into real
-	# value.
-	ieee_32 = '1|10000000|00100000000000000000000'
+    # Floating Point Representation
+    # to be converted into real
+    # value.
+    ieee_32 = '1|10000000|00100000000000000000000'
 
-	# First bit will be sign bit.
-	sign_bit = int(ieee_32[0])
+    # First bit will be sign bit.
+    sign_bit = int(ieee_32[0])
 
-	# Next 8 bits will be
-	# Exponent Bits in Biased
-	# form.
-	exponent_bias = int(ieee_32[2 : 10], 2)
+    # Next 8 bits will be
+    # Exponent Bits in Biased
+    # form.
+    exponent_bias = int(ieee_32[2 : 10], 2)
 
-	# In 32 Bit format bias
-	# value is 127 so to have
-	# unbiased exponent
-	# subtract 127.
-	exponent_unbias = exponent_bias - 127
+    # In 32 Bit format bias
+    # value is 127 so to have
+    # unbiased exponent
+    # subtract 127.
+    exponent_unbias = exponent_bias - 127
 
-	# Next 23 Bits will be
-	# Mantissa (1.M format)
-	mantissa_str = ieee_32[11 : ]
+    # Next 23 Bits will be
+    # Mantissa (1.M format)
+    mantissa_str = ieee_32[11 : ]
 
-	# Function call to convert
-	# 23 binary bits into
-	# 1.M real no. form
-	mantissa_int = convertToInt(mantissa_str)
+    # Function call to convert
+    # 23 binary bits into
+    # 1.M real no. form
+    mantissa_int = convertToInt(mantissa_str)
 
-	# The final real no. obtained
-	# by sign bit, mantissa and
-	# Exponent.
-	real_no = pow(-1, sign_bit) * mantissa_int * pow(2, exponent_unbias)
+    # The final real no. obtained
+    # by sign bit, mantissa and
+    # Exponent.
+    real_no = pow(-1, sign_bit) * mantissa_int * pow(2, exponent_unbias)
 
-	# Printing the obtained
-	# Real value of floating
-	# Point Representation.
-	print("The float value of the given IEEE-754 representation is :",real_no)
+    # Printing the obtained
+    # Real value of floating
+    # Point Representation.
+    print("The float value of the given IEEE-754 representation is :",real_no)
