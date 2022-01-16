@@ -1,3 +1,9 @@
+# Executable Objects
+*.exo
+
+# Zig
+zig-cache/
+
 # Prerequisites
 *.d
 
