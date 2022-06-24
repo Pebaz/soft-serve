@@ -135,17 +135,18 @@ if __name__ == "__main__":
     # Function call to get
     # Sign, Exponent and
     # Mantissa Bit Strings.
-    sign_bit, exp_str, mant_str = floatingPoint(-2.250000)
+    num = -2.205 / 0.1
+    sign_bit, exp_str, mant_str = floatingPoint(num)
 
     # Final Floating point Representation.
     ieee_32 = str(sign_bit) + '|' + exp_str + '|' + mant_str
 
     # Printing the ieee 32 representation.
-    print("IEEE 754 representation of -2.250000 is :")
+    print(f"IEEE 754 representation of {num} is :")
     print(ieee_32)
 
 
-
+print()
 
 
 # Python program to convert
@@ -171,6 +172,7 @@ def convertToInt(mantissa_str):
     # negative powers on 2 for
     # conversion.
     for i in mantissa_str:
+        print(2, power_count)
 
         # Adding converted value of
         # Binary bits in every
@@ -190,7 +192,7 @@ if __name__ == "__main__":
     # Floating Point Representation
     # to be converted into real
     # value.
-    ieee_32 = '1|10000000|00100000000000000000000'
+    # ieee_32 = '1|10000000|00100000000000000000000'
 
     # First bit will be sign bit.
     sign_bit = int(ieee_32[0])

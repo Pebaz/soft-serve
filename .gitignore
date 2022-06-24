@@ -1,3 +1,8 @@
+.vs/
+
+# Executable Objects
+*.exo
+
 # Zig
 zig-cache/
 
