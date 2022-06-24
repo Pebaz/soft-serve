@@ -130,15 +130,21 @@ def int_to_bit_width(num, bit_width):
 # ! This is wrong. Better way.
 def float_to_bits(float_, is_double):
     bytes_ = struct.pack('d' if is_double else 'f', float_)
-    total_bits = len(bytes_) * 8
-    bits = Bits[total_bits]()
-    for i, byte in enumerate(bytes_):
-        bit_string = bin(byte)[2:]
-        if len(bit_string) < 8:
-            bit_string = (8 - len(bit_string)) * '0' + bit_string
-        for bit_index in range(8):
-            bits[(i * 8) + bit_index] = bit_string[bit_index]
-    return bits
+    for byte in reversed(bytes_):
+        for bit_index in reversed(range(8)):
+            bit = (byte >> bit_index) & 1
+            print(bit, end='')
+    print()
+
+    # total_bits = len(bytes_) * 8
+    # bits = Bits[total_bits]()
+    # for i, byte in enumerate(bytes_):
+    #     bit_string = bin(byte)[2:]
+    #     if len(bit_string) < 8:
+    #         bit_string = (8 - len(bit_string)) * '0' + bit_string
+    #     for bit_index in range(8):
+    #         bits[(i * 8) + bit_index] = bit_string[bit_index]
+    # return bits
 
 
 print(Float)
