@@ -5,9 +5,10 @@
 
 # Then directly add both numbers
 
+import struct
+
 class VariableBitWidth(type):
-    registered_types = {}
-    instantiated_types = {}
+    registered_types, instantiated_types = {}, {}
 
     def __new__(cls, name, bases, dict_):
         cls.registered_types[name] = bases, dict_
@@ -126,6 +127,20 @@ def int_to_bit_width(num, bit_width):
     bits = ([0] * (bit_width - len(bits))) + bits
     return bits
 
+# ! This is wrong. Better way.
+def float_to_bits(float_, is_double):
+    bytes_ = struct.pack('d' if is_double else 'f', float_)
+    total_bits = len(bytes_) * 8
+    bits = Bits[total_bits]()
+    for i, byte in enumerate(bytes_):
+        bit_string = bin(byte)[2:]
+        if len(bit_string) < 8:
+            bit_string = (8 - len(bit_string)) * '0' + bit_string
+        for bit_index in range(8):
+            bits[(i * 8) + bit_index] = bit_string[bit_index]
+    return bits
+
+
 print(Float)
 print(Float[32])
 print(Float[32]())
@@ -184,3 +199,6 @@ print('ym =', ym, 'shifted', xe - ye, 'bits')
 
 nm = xm + ym
 print('nm =', nm)
+
+print(float_to_bits(3.14, False))
+print('01000000010010001111010111000010')

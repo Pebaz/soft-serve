@@ -7,7 +7,7 @@
 
 # Soft Serve
 
-> IEEE 754 Soft Floating Point Library ~~Implemented In Zig~~
+> IEEE 754 Soft Floating Point Library
 
 ## Building
 
