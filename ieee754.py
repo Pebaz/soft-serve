@@ -100,9 +100,7 @@ assert Bits[0] is Bits[0]  # Type caching
 
 # It doesn't make sense to have a Float class since mantissa can't be solved.
 # Just make an indexible number class
-class Float(metaclass=VariableBitWidth):
-    bit_width = 0
-
+class Float32(Bits[32]):
     def __init__(self, bits: list[int] = None):
         self.bits = bits or [0] * self.bit_width
         assert len(self.bits) == self.bit_width, 'Invalid provided bit width'
@@ -136,39 +134,25 @@ def float_to_bits(float_, is_double):
             print(bit, end='')
     print()
 
-    # total_bits = len(bytes_) * 8
-    # bits = Bits[total_bits]()
-    # for i, byte in enumerate(bytes_):
-    #     bit_string = bin(byte)[2:]
-    #     if len(bit_string) < 8:
-    #         bit_string = (8 - len(bit_string)) * '0' + bit_string
-    #     for bit_index in range(8):
-    #         bits[(i * 8) + bit_index] = bit_string[bit_index]
-    # return bits
-
-
-print(Float)
-print(Float[32])
-print(Float[32]())
-print(repr(Float[32]()))
-print(repr(Float[3](bin_to_bits('111'))))  # Illustrates why Float can't be.
-print()
 print(Bits)
 print(Bits[4])
 print(Bits[4]())
 print(repr(Bits[4]()))
+print()
 
 a = Bits[8]()
 a[0] = 1
 print(a, repr(a))
 print(a[:4], repr(a[:4]))
 print(a[:4] + a[4:], repr(a[:4] + a[4:]))
+print()
 
 a = Bits[3]([0, 0, 1])
 b = Bits[3]([0, 1, 1])
 print('a =', a)
 print('b =', b)
 print('->', a + b)
+print()
 
 # https://www.youtube.com/watch?v=mKJiD2ZAlwM
 print('\nAdd Two Float Numbers')
@@ -176,6 +160,7 @@ x = Bits[32](bin_to_bits('01000010000011110000000000000000'))
 print('x =', x)
 y = Bits[32](bin_to_bits('01000001101001000000000000000000'))
 print('y =', y)
+print()
 
 xeb = x[1:9]
 xe = int(xeb)
@@ -205,6 +190,8 @@ print('ym =', ym, 'shifted', xe - ye, 'bits')
 
 nm = xm + ym
 print('nm =', nm)
+print('gl = 11100001000000000000000')
+print()
 
 print(float_to_bits(3.14, False))
 print('01000000010010001111010111000010')
