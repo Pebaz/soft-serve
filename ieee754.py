@@ -123,6 +123,9 @@ class Float32(Bits[32]):
     exponent = lambda self: ''.join(str(i) for i in self.bits[1:9])
     mantissa = lambda self: ''.join(str(i) for i in self.bits[9:])
 
+    def __add__(self, other):
+        pass  # TODO(pbz): Override super().__add__()
+
 def bin_to_bits(binary_literal_string):
     return [int(i) for i in binary_literal_string]
 
