@@ -33,6 +33,12 @@ class VariableBitWidth(type):
     __format__ = lambda self, fmt: str(self)
 
 class Bits(metaclass=VariableBitWidth):
+    """
+    ! Bits is data. Bits acts like a list of bits, reading from left to right.
+    ! Treating this list of data as a number is entirely up to the user and the
+    ! API treats the bit index zero as the leftmost bit in the bit region. This
+    ! is consistent with other indexible data structures in Python.
+    """
     bit_width = 0
 
     def __init__(self, bits: list[int] = None):
