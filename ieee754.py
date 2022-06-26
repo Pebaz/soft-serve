@@ -47,6 +47,7 @@ class Bits(metaclass=VariableBitWidth):
 
     __str__ = lambda self: ''.join(str(i) for i in self.bits)
     __repr__ = lambda self: f'<{self.__class__} {self}>'
+    __format__ = lambda self, _: str(self)
 
     def __getitem__(self, index):
         bits = self.bits[index]
@@ -107,24 +108,36 @@ assert Bits[0] is Bits[0]  # Type caching
 # It doesn't make sense to have a Float class since mantissa can't be solved.
 # Just make an indexible number class
 class Float32(Bits[32]):
-    def __init__(self, bits: list[int] = None):
-        self.bits = bits or [0] * self.bit_width
-        assert len(self.bits) == self.bit_width, 'Invalid provided bit width'
+    def __init__(self, bit_string):
+        super().__init__(bin_to_bits(bit_string))
+
+    # def __init__(self, bits: list[int] = None):
+    #     self.bits = bits or [0] * self.bit_width
+    #     assert len(self.bits) == self.bit_width, 'Invalid provided bit width'
 
     __str__ = lambda self: ''.join(str(i) for i in self.bits)
 
     def __repr__(self):
-        s = self.sign()
-        e = self.exponent()
-        m = self.mantissa()
+        s = self.sign()[0]
+        e = str(self.exponent())
+        m = str(self.mantissa())
         return f'<{self.__class__} s={s:b} e={e} m={m}>'
 
-    sign = lambda self: self.bits[0]
-    exponent = lambda self: ''.join(str(i) for i in self.bits[1:9])
-    mantissa = lambda self: ''.join(str(i) for i in self.bits[9:])
+    sign = lambda self: self[:1]
+    exponent = lambda self: self[1:9]
+    mantissa = lambda self: self[9:]
 
     def __add__(self, other):
         pass  # TODO(pbz): Override super().__add__()
+
+        self_exponent = int(self.exponent()) - 127
+        other_exponent = int(other.exponent()) - 127
+
+        # ! Assume self_exponent larger for now
+
+        print(self_exponent, other_exponent)
+
+
 
 def bin_to_bits(binary_literal_string):
     return [int(i) for i in binary_literal_string]
@@ -204,3 +217,9 @@ print()
 
 print(float_to_bits(3.14, False))
 print('01000000010010001111010111000010')
+
+print()
+
+x = Float32('01000010000011110000000000000000')
+y = Float32('01000001101001000000000000000000')
+x + y
