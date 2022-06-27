@@ -1,3 +1,6 @@
+"""
+Float Toy: https://evanw.github.io/float-toy/
+"""
 
 # Exponent - 127
 
@@ -206,11 +209,11 @@ class Float32(Bits[32]):
 
         result = 0
 
-        for bit_index, bit in enumerate(self.bits):
+        for bit_index, bit in enumerate(reversed(self.bits)):
             if bit:
                 result = set_bit(result, bit_index)
 
-        bytes_ = result.to_bytes(byteorder='little', length=4, signed=False)
+        bytes_ = result.to_bytes(4, 'big', signed=False)
         return struct.unpack('!f', bytes_)[0]
 
 def bin_to_bits(binary_literal_string):
@@ -298,5 +301,7 @@ print()
 x = Float32('01000010000011110000000000000000')
 y = Float32('01000001101001000000000000000000')
 result = x + y
+print(result)
 
 print('\n  Float:', float(result))
+print('\n  Float:', struct.unpack('!f', 0b01000010011000010000000000000000.to_bytes(4, 'big')))
