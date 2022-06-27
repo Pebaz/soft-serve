@@ -10,6 +10,15 @@ Float Toy: https://evanw.github.io/float-toy/
 
 import struct
 
+def f32_to_bits(f32: float) -> int:
+    # * Losing precision here ('!i') since Python's f32 is actually f64
+    return struct.unpack('!i', struct.pack('!f', f32))[0]
+
+def bits_to_f32(bits: int) -> float:
+    return struct.unpack('!f', struct.pack('!i', bits))[0]
+
+assert bits_to_f32(f32_to_bits(3.14)) == 3.140000104904175
+
 class VariableBitWidth(type):
     registered_types, instantiated_types = {}, {}
 
@@ -108,15 +117,22 @@ class Bits(metaclass=VariableBitWidth):
 
 assert Bits[0] is Bits[0]  # Type caching
 
+def int_to_bit_width(num, bit_width):
+    bits = [int(i) for i in bin(num)[2:]]
+    bits = ([0] * (bit_width - len(bits))) + bits
+    return bits
+
 # It doesn't make sense to have a Float class since mantissa can't be solved.
 # Just make an indexible number class
 class Float32(Bits[32]):
-    def __init__(self, bit_string):
-        super().__init__(bin_to_bits(bit_string))
-
-    # def __init__(self, bits: list[int] = None):
-    #     self.bits = bits or [0] * self.bit_width
-    #     assert len(self.bits) == self.bit_width, 'Invalid provided bit width'
+    def __init__(self, initializer):
+        if isinstance(initializer, float):
+            float_memory = f32_to_bits(initializer)
+            super().__init__(int_to_bit_width(float_memory, self.bit_width))
+        elif isinstance(initializer, str):
+            super().__init__(bin_to_bits(initializer))
+        else:
+            raise NotImplementedError('Unsupported initializer type')
 
     __str__ = lambda self: ''.join(str(i) for i in self.bits)
 
@@ -196,7 +212,7 @@ class Float32(Bits[32]):
 
         print('Result:', result)
 
-        float_result = Float32('0' * 32)
+        float_result = Float32('0' * self.bit_width)
         float_result.bits = result.bits
         return float_result
 
@@ -213,18 +229,18 @@ class Float32(Bits[32]):
             if bit:
                 result = set_bit(result, bit_index)
 
-        bytes_ = result.to_bytes(4, 'big', signed=False)
-        return struct.unpack('!f', bytes_)[0]
+        return bits_to_f32(result)
+
+assert float(Float32(3.14)) == 3.140000104904175, (
+    'Python floats are actually 64 bit so they can store 3.14 precisely. If you'
+    'do: ctypes.c_float(3.14), it also prints: 3.140000104904175.'
+)
 
 def bin_to_bits(binary_literal_string):
     return [int(i) for i in binary_literal_string]
 
-def int_to_bit_width(num, bit_width):
-    bits = [int(i) for i in bin(num)[2:]]
-    bits = ([0] * (bit_width - len(bits))) + bits
-    return bits
 
-# ! This is wrong. Better way.
+
 def float_to_bits(float_, is_double):
     bytes_ = struct.pack('d' if is_double else 'f', float_)
     for byte in reversed(bytes_):
@@ -305,3 +321,10 @@ print(result)
 
 print('\n  Float:', float(result))
 print('\n  Float:', struct.unpack('!f', 0b01000010011000010000000000000000.to_bytes(4, 'big')))
+
+print()
+print(float(Float32(3.14)))
+print()
+
+print('.>', f32_to_bits(3.14))
+print('.>', bits_to_f32(1078523331))
