@@ -81,7 +81,7 @@ class Bits(metaclass=VariableBitWidth):
 
         return self
 
-    def __and__(self, other):
+    def combine(self, other):
         bits = self.bits + other.bits
         return Bits[len(bits)](bits)
 
@@ -128,14 +128,91 @@ class Float32(Bits[32]):
     mantissa = lambda self: self[9:]
 
     def __add__(self, other):
-        pass  # TODO(pbz): Override super().__add__()
+        assert type(self) is type(other), (
+            f'Incompatible types: cannot add {type(other)} to {type(self)}'
+        )
 
+        self_mantissa = self.mantissa()
+        other_mantissa = other.mantissa()
         self_exponent = int(self.exponent()) - 127
         other_exponent = int(other.exponent()) - 127
 
-        # ! Assume self_exponent larger for now
+        print('Mantissa:'.ljust(13), self_mantissa, other_mantissa)
+        print('Exponent:'.ljust(13), self_exponent, other_exponent)
 
-        print(self_exponent, other_exponent)
+        # TODO(pbz): Use this to know when to add the 1
+        is_zero = int(self.exponent()) == 0
+        if is_zero:
+            "Don't add the implicit 1 to the mantissa"
+
+        # Add implicit 1 for normalized form
+        # ! CRITICAL
+        # TODO(pbz): Shifting would imply losing some information
+        # TODO(pbz): Is it ok to just add the bit since this would most likely
+        # TODO(pbz): Be within an i32 in C code anyway (Enough room)?
+        self_mantissa = Bits[1]([1]).combine(self_mantissa)
+        other_mantissa = Bits[1]([1]).combine(other_mantissa)
+
+        print('Mantissa:'.ljust(13), self_mantissa, other_mantissa)
+        print('Exponent:'.ljust(13), self_exponent, other_exponent)
+
+        if self_exponent < other_exponent:
+            # Shift by difference to make both exponents now match
+            self_mantissa >> other_exponent - self_exponent
+            self_exponent = other_exponent
+
+        elif self_exponent > other_exponent:
+            # Shift by difference to make both exponents now match
+            other_mantissa >> self_exponent - other_exponent
+            other_exponent = self_exponent
+
+        print('Mantissa:'.ljust(13), self_mantissa, other_mantissa)
+        print('Exponent:'.ljust(13), self_exponent, other_exponent)
+
+        new_mantissa = self_mantissa + other_mantissa
+        print('New Mantissa:', new_mantissa)
+
+        # ! CRITICAL
+        # TODO(pbz): Shifting off the implicit normalized form 1 bit
+        new_mantissa = new_mantissa << 1
+        new_mantissa = new_mantissa[:-1]
+
+        print('New Mantissa:', new_mantissa)
+
+        print('1.' + str(new_mantissa[:-16]) + ' * 2 ** ' + str(self_exponent))
+
+        new_exponent = self_exponent + 127
+        print('New Exponent:', new_exponent)
+        new_exponent = Bits[8](int_to_bit_width(new_exponent, 8))
+        print('New Exponent:', new_exponent)
+
+        # TODO(pbz): Have to assume sign is positive until I figure it out
+        new_sign = Bits[1]([0])
+
+        result = new_sign.combine(new_exponent.combine(new_mantissa))
+
+        print('Result:', result)
+
+        float_result = Float32('0' * 32)
+        float_result.bits = result.bits
+        return float_result
+
+    def __float__(self):
+        def set_bit(value, bit):
+            return value | (1 << bit)
+
+        def clear_bit(value, bit):
+            return value & ~(1 << bit)
+
+        result = 0
+
+        for bit_index, bit in enumerate(self.bits):
+            if bit:
+                result = set_bit(result, bit_index)
+
+        bytes_ = result.to_bytes(byteorder='little', length=4, signed=False)
+        return struct.unpack('!f', bytes_)[0]
+
 
 
 
@@ -222,4 +299,6 @@ print()
 
 x = Float32('01000010000011110000000000000000')
 y = Float32('01000001101001000000000000000000')
-x + y
+result = x + y
+
+print('\n  Float:', float(result))
