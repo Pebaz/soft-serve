@@ -213,9 +213,6 @@ class Float32(Bits[32]):
         bytes_ = result.to_bytes(byteorder='little', length=4, signed=False)
         return struct.unpack('!f', bytes_)[0]
 
-
-
-
 def bin_to_bits(binary_literal_string):
     return [int(i) for i in binary_literal_string]
 
@@ -297,6 +294,7 @@ print('01000000010010001111010111000010')
 
 print()
 
+# TODO(pbz): Implement struct.pack() version: Float32(3.14)
 x = Float32('01000010000011110000000000000000')
 y = Float32('01000001101001000000000000000000')
 result = x + y
