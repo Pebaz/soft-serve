@@ -134,7 +134,8 @@ class Float32(Bits[32]):
         else:
             raise NotImplementedError('Unsupported initializer type')
 
-    __str__ = lambda self: ''.join(str(i) for i in self.bits)
+    def __str__(self):
+        return f"{'-' if self[0] else ''}{''.join(str(i) for i in self.bits)}"
 
     def __repr__(self):
         s = self.sign()[0]
@@ -151,6 +152,8 @@ class Float32(Bits[32]):
             f'Incompatible types: cannot add {type(other)} to {type(self)}'
         )
 
+        self_sign = self.sign()
+        other_sign = other.sign()
         self_mantissa = self.mantissa()
         other_mantissa = other.mantissa()
         self_exponent = int(self.exponent()) - 127
@@ -188,7 +191,16 @@ class Float32(Bits[32]):
         print('Mantissa:'.ljust(13), self_mantissa, other_mantissa)
         print('Exponent:'.ljust(13), self_exponent, other_exponent)
 
-        new_mantissa = self_mantissa + other_mantissa
+
+
+        # * This new method is just using hardware int addition on the mantssas!
+        # new_mantissa = self_mantissa + other_mantissa
+        new_mantissa = Bits[len(self_mantissa.bits)](
+            int_to_bit_width(
+                int(self_mantissa) + int(other_mantissa),
+                len(self_mantissa.bits)
+            )
+        )
         print('New Mantissa:', new_mantissa)
 
         # ! CRITICAL
@@ -328,3 +340,4 @@ print()
 
 print('.>', f32_to_bits(3.14))
 print('.>', bits_to_f32(1078523331))
+print()
