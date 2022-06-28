@@ -1,5 +1,6 @@
 """
 Float Toy: https://evanw.github.io/float-toy/
+Best Addition Video: https://www.youtube.com/watch?v=mKJiD2ZAlwM
 """
 
 # Exponent - 127
@@ -12,10 +13,14 @@ import struct
 
 def f32_to_bits(f32: float) -> int:
     # * Losing precision here ('!i') since Python's f32 is actually f64
-    return struct.unpack('!i', struct.pack('!f', f32))[0]
+    return struct.unpack('!I', struct.pack('!f', f32))[0]
 
 def bits_to_f32(bits: int) -> float:
-    return struct.unpack('!f', struct.pack('!i', bits))[0]
+    try:
+        as_int = struct.pack('!I', bits)
+        return struct.unpack('!f', as_int)[0]
+    except:
+        import ipdb; ipdb.set_trace()
 
 assert bits_to_f32(f32_to_bits(3.14)) == 3.140000104904175
 
@@ -134,14 +139,13 @@ class Float32(Bits[32]):
         else:
             raise NotImplementedError('Unsupported initializer type')
 
-    def __str__(self):
-        return f"{'-' if self[0] else ''}{''.join(str(i) for i in self.bits)}"
+    __str__ = lambda self: str(float(self))
 
     def __repr__(self):
         s = self.sign()[0]
         e = str(self.exponent())
         m = str(self.mantissa())
-        return f'<{self.__class__} s={s:b} e={e} m={m}>'
+        return f'<{self.__class__} {float(self)} s={s:b} e={e} m={m}>'
 
     sign = lambda self: self[:1]
     exponent = lambda self: self[1:9]
@@ -190,8 +194,6 @@ class Float32(Bits[32]):
 
         print('Mantissa:'.ljust(13), self_mantissa, other_mantissa)
         print('Exponent:'.ljust(13), self_exponent, other_exponent)
-
-
 
         # * This new method is just using hardware int addition on the mantssas!
         # new_mantissa = self_mantissa + other_mantissa
@@ -251,16 +253,6 @@ assert float(Float32(3.14)) == 3.140000104904175, (
 def bin_to_bits(binary_literal_string):
     return [int(i) for i in binary_literal_string]
 
-
-
-def float_to_bits(float_, is_double):
-    bytes_ = struct.pack('d' if is_double else 'f', float_)
-    for byte in reversed(bytes_):
-        for bit_index in reversed(range(8)):
-            bit = (byte >> bit_index) & 1
-            print(bit, end='')
-    print()
-
 print(Bits)
 print(Bits[4])
 print(Bits[4]())
@@ -281,56 +273,13 @@ print('b =', b)
 print('->', a + b)
 print()
 
-# https://www.youtube.com/watch?v=mKJiD2ZAlwM
-print('\nAdd Two Float Numbers')
-x = Bits[32](bin_to_bits('01000010000011110000000000000000'))
-print('x =', x)
-y = Bits[32](bin_to_bits('01000001101001000000000000000000'))
-print('y =', y)
 print()
 
-xeb = x[1:9]
-xe = int(xeb)
-xm = x[9:]
-yeb = y[1:9]
-ye = int(yeb)
-ym = y[9:]
-
-print('xeb =', xeb, xe - 127)
-print('yeb =', yeb, ye - 127)
-
-print('xm =', xm)
-print('ym =', ym)
-
-# Make room for scientific notation bit
-xm = xm >> 1
-xm[0] = 1
-ym = ym >> 1
-ym[0] = 1
-print('xm =', xm, 'with scientific bit set')
-print('ym =', ym, 'with scientific bit set')
-
-# Shift to match exponent
-ym = ym >> xe - ye
-print('xm =', xm)
-print('ym =', ym, 'shifted', xe - ye, 'bits')
-
-nm = xm + ym
-print('nm =', nm)
-print('gl = 11100001000000000000000')
-print()
-
-print(float_to_bits(3.14, False))
-print('01000000010010001111010111000010')
-
-print()
-
-# TODO(pbz): Implement struct.pack() version: Float32(3.14)
 x = Float32('01000010000011110000000000000000')
 y = Float32('01000001101001000000000000000000')
 result = x + y
+assert float(result) == 56.25
 print(result)
-
 print('\n  Float:', float(result))
 print('\n  Float:', struct.unpack('!f', 0b01000010011000010000000000000000.to_bytes(4, 'big')))
 
@@ -341,3 +290,6 @@ print()
 print('.>', f32_to_bits(3.14))
 print('.>', bits_to_f32(1078523331))
 print()
+
+negative_pi = Float32('11000000010010010000111111011011')
+print(negative_pi, float(negative_pi))
