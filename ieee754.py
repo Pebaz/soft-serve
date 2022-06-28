@@ -292,4 +292,7 @@ print('.>', bits_to_f32(1078523331))
 print()
 
 negative_pi = Float32('11000000010010010000111111011011')
-print(negative_pi, float(negative_pi))
+print('negative_pi  =', negative_pi)
+one_point_oh = Float32(1.0)
+print('one_point_oh = ', one_point_oh)
+print(one_point_oh + negative_pi)
