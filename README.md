@@ -9,21 +9,14 @@
 
 > IEEE 754 Soft Floating Point Library
 
-## Building
+Soft Serve is currently in active development but here are the operations that
+have been implemented so far:
 
-Ensure that [Berkeley-SoftFloat-3](https://github.com/ucb-bar/berkeley-softfloat-3)
-is cloned next to Soft-Serve's root directory.
+* F32 Addition
+    - [x] Positive + Positive
+    - [ ] Positive + Negative
+    - [ ] Negative + Negative
+    - [ ] Overflow/Underflow Exceptions
+    - [ ] Different Rounding Modes
 
-To build Berkeley-SoftFloat-3, run `make` in whatever platform directory you
-need (`build/Linux-x86_64-GCC/` or `build/Win32-MinGW`, etc.).
-
-*One important thing is to rename the resulting `softfloat.a` to
-`libsoftfloat.a` so that GCC can find it.*
-
-```bash
-$ gcc src/main.c \
-    -I ../berkeley-softfloat-3/source/include \
-    -L ../berkeley-softfloat-3/build/Linux-x86_64-GCC \
-    -l softfloat
-    -o soft-serve.exo  # "Executable Object"
-```
+* *More operations to come*
