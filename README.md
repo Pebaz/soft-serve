@@ -9,6 +9,14 @@
 
 > IEEE 754 Soft Floating Point Library
 
+### Running
+
+```
+$ python ieee754.py
+```
+
+### Info
+
 Soft Serve is currently in active development but here are the operations that
 have been implemented so far:
 
