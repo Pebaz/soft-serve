@@ -127,8 +127,6 @@ def int_to_bit_width(num, bit_width):
     bits = ([0] * (bit_width - len(bits))) + bits
     return bits
 
-# It doesn't make sense to have a Float class since mantissa can't be solved.
-# Just make an indexible number class
 class Float32(Bits[32]):
     def __init__(self, initializer):
         if isinstance(initializer, float):
@@ -295,4 +293,5 @@ negative_pi = Float32('11000000010010010000111111011011')
 print('negative_pi  =', negative_pi)
 one_point_oh = Float32(1.0)
 print('one_point_oh = ', one_point_oh)
-print(one_point_oh + negative_pi)
+# TODO(pbz): Make negative addition work in fixed point first
+# ! print(one_point_oh + negative_pi)
