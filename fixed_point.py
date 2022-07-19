@@ -1,4 +1,7 @@
 
+from regex import B
+
+
 def Fixed(width, dot):
     class FixedDecimal:
         def __init__(self, value):
@@ -32,9 +35,19 @@ def Fixed(width, dot):
                     buf = '.' + buf
             return buf
 
+        def __add__(self, other):
+            self.value += other.value
+            return self
+
     return FixedDecimal
 
 Fix8 = Fixed(8, 4)
 
-a = Fix8(0b00011100)
+a = Fix8(0b00001000)
 print(float(a), a)
+
+b = Fix8(0b00000100)
+print(float(b), b)
+
+c = a + b
+print(float(c), c)
