@@ -1,5 +1,5 @@
 
-from regex import B
+from regex import B, D
 
 
 def Fixed(width, dot):
@@ -36,8 +36,10 @@ def Fixed(width, dot):
             return buf
 
         def __add__(self, other):
-            self.value += other.value
-            return self
+            return type(self)(self.value + other.value)
+
+        def __sub__(self, other):
+            return type(self)(self.value - other.value)
 
     return FixedDecimal
 
@@ -51,3 +53,31 @@ print(float(b), b)
 
 c = a + b
 print(float(c), c)
+
+d = c - b
+print(float(d), d)
+
+e = d + d
+print(float(e), e)
+
+f = e + e
+print(float(f), f)
+
+g = f + f
+print(float(g), g)
+
+h = g + g
+print(float(h), h)
+
+i = h + g + f + e
+print(float(i), i)
+
+i = h + g + f + e + Fix8(0b00001111)
+print(float(i), i)
+
+print(float(Fix8(0b0000_0100)), Fix8(0b0000_0100))
+
+# TODO(pbz): This is wrong. This says 0.25 * 0.5 = 0.0625 but should be 0.125
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+print(float(Fix8(0b0000_0010)), Fix8(0b0000_0010))
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
