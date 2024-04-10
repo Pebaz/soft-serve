@@ -35,6 +35,7 @@ class Single(Mem[32]):
         return buffer
 
     def __float__(self):
+        "struct.unpack and Single.bytes assume system endianness by default."
         return struct.unpack('f', self.bytes())[0]
 
     def __str__(self):
@@ -44,11 +45,5 @@ class Single(Mem[32]):
 single1 = Single('10000000')
 single2 = Single('0')
 # print(single1 + single2)
-print(Mem(single1.bytes()))
-print(repr(single1))
-print(single1.bytes())
-print(float(single1))
-print(single1)
 # TODO(pbz): Fix from_float in tidbytes to suggest using f32 (currently doesn't)
 print(Single(f32(3.14)))
-print(int(single1))
